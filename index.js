@@ -13,6 +13,7 @@ const generate = document.getElementById('generate');
 const clipboard = document.getElementById('clipboard');
 
 const clear = document.getElementById('clear');
+const notification = document.getElementById('notification');
 
 const randomFunc = {
     lower: getRandomLower,
@@ -26,7 +27,8 @@ function generatePassword(lower, upper, number, symbol, length) {
     let generatedPassword = '';
     const typesCount = lower + upper + number + symbol;
 
-    const typesArr = [{ lower }, { upper }, { number }, { symbol }].filter(item => Object.values(item)[0]);
+    const typesArr = [{ lower }, { upper }, { number }, { symbol }]
+        .filter(item => Object.values(item)[0]);
 
     if (typesCount === 0) {
         return '';
@@ -78,21 +80,53 @@ clipboard.addEventListener('click', async () => {
     const password = result.innerText;
     if (!password) {
         alert("Please generate a password first");
+         showNotification('No password to clear!','warning');
         return;
     }
 
     try {
         await navigator.clipboard.writeText(password);
         alert("Password copied to clipboard!");
+         showNotification('Password copied to clipboard!', 'success');
     } catch (err) {
         console.error("Failed to copy: ", err);
+        showNotification('Failed to copy password!', 'error');
+
     }
 });
 
 clear.addEventListener('click', () => {
     result.innerText = '';
     alert("Password cleared");
+    showNotification('Password cleared!', 'error');
+
 });
 
+
+
+function showNotification(message, type = 'success') {
+    notification.classList.remove('show');
+    
+    notification.className = 'notification';
+    
+    notification.querySelector('span').textContent = message;
+    
+    if (type === 'success') {
+        notification.classList.add('success');
+    } else if (type === 'error') {
+        notification.classList.add('error');
+    } else if (type === 'warning') {
+        notification.classList.add('warning');
+    }
+     void notification.offsetWidth; 
+      notification.classList.add('show');
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+
+}
+    
+    
 
 
